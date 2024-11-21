@@ -6,54 +6,42 @@ if (!isset($_SESSION['username'])) {
 }
 
 // Backend integration variables
-$type = isset($_GET['type']) ? $_GET['type'] : 'attendance'; // Default to 'attendance'
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;       // Default to page 1
-$search = isset($_GET['search']) ? $_GET['search'] : '';     // Default to empty search
-
+$type = $_GET['type'] ?? 'attendance';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$search = $_GET['search'] ?? '';
 
 // Construct API URL
-$url = "get_data.php?type=$type&page=$page&search=" . urlencode($search);
+$url = "http://localhost/CS5200FinalProject/membership_portal/get_data.php?type=$type&page=$page&search=" . urlencode($search);
 
-// Debug: Output the URL
-echo "<pre>API URL: $url</pre>";
+// Fetch API data
+function fetchApiData($url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($httpCode !== 200) {
+        return false; // Fetch failed
+    }
+    return $response;
+}
 
-// Fetch the API response
-$response = @file_get_contents($url);
+$response = fetchApiData($url);
 
 if ($response === false) {
-    $data = ['error' => 'Failed to fetch data. Please check the API or connection.'];
+    echo "<p style='color: red;'>Error: Unable to fetch data from the API. Please check if `get_data.php` is accessible.</p>";
+    $data = ['error' => 'Failed to fetch data.'];
 } else {
     $data = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        $data = ['error' => 'Invalid JSON response from the API.'];
+        echo "<p>Error: Invalid JSON response from API: " . json_last_error_msg() . "</p>";
+        $data = ['error' => 'Invalid JSON response.'];
     }
 }
 
-// Debug: Output the raw response
-if ($response === false) {
-    echo "<pre>Failed to fetch data from API. Check if `get_data.php` is accessible.</pre>";
-} else {
-    echo "<pre>Raw Response: $response</pre>";
-}
-
-// Decode API response or handle errors
-$data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch data'];
-
-// Debug: Output the parsed data
-echo "<pre>Parsed Data: ";
-print_r($data);
-echo "</pre>";
-
-
-
-
-
-
-
-$response = @file_get_contents($url);
-
-// Decode API response or handle errors
-$data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch data'];
 ?>
 
 <!DOCTYPE html>
@@ -86,7 +74,7 @@ $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch 
     </form>
 
     <?php if (isset($data['error'])): ?>
-        <p>Error: <?php echo htmlspecialchars($data['error']); ?></p>
+        <p style="color: red;">Error: <?php echo htmlspecialchars($data['error']); ?></p>
     <?php else: ?>
         <table>
             <thead>
@@ -126,3 +114,4 @@ $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch 
     <?php endif; ?>
 </body>
 </html>
+
