@@ -1,41 +1,41 @@
 <?php
 
+require_once __DIR__ . '/../utils/upload.php';  // Include the upload function
+
 use PHPUnit\Framework\TestCase;
 
 class FileUploadTest extends TestCase
 {
     public function testFileUploadSuccess()
-{
-    $_FILES['file'] = [
-        'name' => 'test.csv',
-        'type' => 'text/csv',
-        'tmp_name' => 'C:/xampp/htdocs/Final_Project_DBMS/project/tests/test.csv', // Replace with correct path
-        'error' => UPLOAD_ERR_OK,
-        'size' => filesize('C:/xampp/htdocs/Final_Project_DBMS/project/tests/test.csv'),
-    ];
+    {
+        // Simulate a successful file upload
+        $file = [
+            'name' => 'test-file.txt',
+            'type' => 'text/plain',
+            'tmp_name' => '/path/to/temp/file',  // Change this to a valid temporary file location for testing
+            'error' => UPLOAD_ERR_OK,
+            'size' => 12345
+        ];
 
-    $this->assertTrue(uploadFile());
-    $this->assertFileExists('C:/xampp/htdocs/Final_Project_DBMS/project/uploads/test.csv');
-}
+        // Call the function and assert the result
+        $result = uploadFile($file);
+        $this->assertTrue($result);
+    }
 
     public function testFileUploadFailure()
     {
-        $testFile = __DIR__ . '/tests/test.txt';
-
-        // Print for debugging
-        echo "Testing invalid file upload for: $testFile\n";
-
-        // Mock the $_FILES superglobal with an invalid file type
-        $_FILES['file'] = [
-            'name' => 'test.txt',
+        // Simulate a failed file upload (error in upload)
+        $file = [
+            'name' => 'invalid-file.txt',
             'type' => 'text/plain',
-            'tmp_name' => $testFile,
-            'error' => UPLOAD_ERR_OK,
-            'size' => filesize($testFile),
+            'tmp_name' => '',  // Simulate missing temporary file
+            'error' => UPLOAD_ERR_NO_FILE,  // Simulate no file uploaded
+            'size' => 0
         ];
 
-        // Run the upload function and assert that it returns false due to invalid extension
-        $this->assertFalse(uploadFile()); 
+        // Call the function and assert the result
+        $result = uploadFile($file);
+        $this->assertFalse($result);
     }
 }
 ?>

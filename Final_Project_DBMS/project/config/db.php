@@ -1,7 +1,7 @@
 <?php
 try {
     $host = 'localhost';
-    $dbname = 'project_db';
+    $dbname = 'choir_management';
     $username = 'root';
     $password = '';
 

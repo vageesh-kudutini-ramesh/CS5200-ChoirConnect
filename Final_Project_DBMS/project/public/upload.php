@@ -14,8 +14,8 @@ if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
     $_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name']; // Add file from $_FILES superglobal
     $_FILES['file']['name'] = $_FILES['file']['name'];
 
-    // Move the uploaded file to the target directory
-    if (uploadFile()) { // Call the function from utils/upload.php
+    // Pass $_FILES['file'] to the uploadFile function
+    if (uploadFile($_FILES['file'])) { // Now passing the file data
         logMessage("File uploaded successfully: " . $_FILES['file']['name']);
         echo json_encode(['status' => 'success']);
     } else {

@@ -7,13 +7,24 @@ echo "Script is running<br>";  // Debug message to confirm script execution
 
 function uploadFile()
 {
-    $uploadDirectory = 'C:/xampp/htdocs/Final_Project_DBMS/uploads/';
-
+    // Update the upload directory to the new location inside the project folder
+      $uploadDirectory = '../../uploads/';
+ 
     // Check if the upload directory exists
     if (!is_dir($uploadDirectory)) {
         echo "Upload directory does not exist. Creating it...\n";
-        mkdir($uploadDirectory, 0777, true);
+        mkdir($uploadDirectory, 0755, true);
     }
+
+    if (!is_writable($uploadDirectory)) {
+        echo "Upload directory is not writable. Please check permissions.\n";
+        return false;
+    }
+
+    // Debugging: Print the $_FILES array to check if it's set correctly
+    echo "<pre>";
+    print_r($_FILES);
+    echo "</pre>";
 
     // Ensure the file is uploaded and no errors occurred
     if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
@@ -36,11 +47,16 @@ function uploadFile()
             return true;
         } else {
             echo "Failed to move file to $destination\n";
-            print_r(error_get_last());
+            print_r(error_get_last()); // Debugging: Output any errors that occurred
             return false;
         }
     } else {
-        echo "No file uploaded or an error occurred during upload: " . $_FILES['file']['error'] . "\n";
+        // Output the error message for debugging if the file is not uploaded or there's an error
+        if (isset($_FILES['file'])) {
+            echo "File upload error: " . $_FILES['file']['error'] . "\n";
+        } else {
+            echo "No file uploaded or an error occurred during upload.\n";
+        }
         return false;
     }
 }
