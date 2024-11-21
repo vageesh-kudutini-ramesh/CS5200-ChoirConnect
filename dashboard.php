@@ -5,13 +5,54 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-// Default values for backend integration
+// Backend integration variables
 $type = isset($_GET['type']) ? $_GET['type'] : 'attendance'; // Default to 'attendance'
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Default to the first page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;       // Default to page 1
+$search = isset($_GET['search']) ? $_GET['search'] : '';     // Default to empty search
 
-// Call get_data.php API for dynamic content
-$url = "get_data.php?type=$type&page=$page";
+
+// Construct API URL
+$url = "get_data.php?type=$type&page=$page&search=" . urlencode($search);
+
+// Debug: Output the URL
+echo "<pre>API URL: $url</pre>";
+
+// Fetch the API response
 $response = @file_get_contents($url);
+
+if ($response === false) {
+    $data = ['error' => 'Failed to fetch data. Please check the API or connection.'];
+} else {
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $data = ['error' => 'Invalid JSON response from the API.'];
+    }
+}
+
+// Debug: Output the raw response
+if ($response === false) {
+    echo "<pre>Failed to fetch data from API. Check if `get_data.php` is accessible.</pre>";
+} else {
+    echo "<pre>Raw Response: $response</pre>";
+}
+
+// Decode API response or handle errors
+$data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch data'];
+
+// Debug: Output the parsed data
+echo "<pre>Parsed Data: ";
+print_r($data);
+echo "</pre>";
+
+
+
+
+
+
+
+$response = @file_get_contents($url);
+
+// Decode API response or handle errors
 $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch data'];
 ?>
 
@@ -24,14 +65,12 @@ $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch 
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header Section -->
     <header>
         <h1>Dashboard</h1>
         <h2>Welcome, <?php echo htmlspecialchars($_SESSION['role'] . " " . $_SESSION['username']); ?></h2>
     </header>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
+    <nav>
         <a href="data_entry.php">Data Entry</a>
         <a href="report.php">Reports</a>
         <a href="?type=attendance">Attendance</a>
@@ -39,20 +78,24 @@ $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch 
         <a href="logout.php">Logout</a>
     </nav>
 
-    <hr>
+    <form method="GET" action="">
+        <input type="hidden" name="type" value="<?php echo htmlspecialchars($type); ?>">
+        <label for="search">Search:</label>
+        <input type="text" name="search" id="search" placeholder="Enter Member ID or Date" value="<?php echo htmlspecialchars($search); ?>">
+        <button type="submit">Search</button>
+    </form>
 
-    <!-- Dynamic Content Section -->
     <?php if (isset($data['error'])): ?>
-        <!-- Show error message if API call fails -->
-        <p class="error">Error: <?php echo htmlspecialchars($data['error']); ?></p>
+        <p>Error: <?php echo htmlspecialchars($data['error']); ?></p>
     <?php else: ?>
-        <!-- Display data table -->
         <table>
             <thead>
                 <tr>
                     <th>Member ID</th>
                     <?php if ($type === 'attendance'): ?>
-                        <th>Attendance Date</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Reason</th>
                     <?php elseif ($type === 'dues'): ?>
                         <th>Amount</th>
                     <?php endif; ?>
@@ -63,7 +106,9 @@ $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch 
                     <tr>
                         <td><?php echo htmlspecialchars($record['member_id']); ?></td>
                         <?php if ($type === 'attendance'): ?>
-                            <td><?php echo htmlspecialchars($record['attendance_date']); ?></td>
+                            <td><?php echo htmlspecialchars($record['date']); ?></td>
+                            <td><?php echo $record['status'] ? "Present" : "Absent"; ?></td>
+                            <td><?php echo htmlspecialchars($record['absence_reason']); ?></td>
                         <?php elseif ($type === 'dues'): ?>
                             <td><?php echo htmlspecialchars($record['amount']); ?></td>
                         <?php endif; ?>
@@ -72,12 +117,10 @@ $data = $response ? json_decode($response, true) : ['error' => 'Failed to fetch 
             </tbody>
         </table>
 
-        <!-- Pagination Links -->
         <div class="pagination">
             <?php for ($i = 1; $i <= $data['total_pages']; $i++): ?>
-                <a href="?type=<?php echo htmlspecialchars($type); ?>&page=<?php echo $i; ?>">
-                    <?php echo $i; ?>
-                </a>
+                <a href="?type=<?php echo htmlspecialchars($type); ?>&page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>"
+                   class="<?php echo $i == $page ? 'active' : ''; ?>"><?php echo $i; ?></a>
             <?php endfor; ?>
         </div>
     <?php endif; ?>
