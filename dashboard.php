@@ -13,7 +13,6 @@ $search = $_GET['search'] ?? '';
 // Construct API URL
 $url = "http://localhost/CS5200FinalProject/membership_portal/get_data.php?type=$type&page=$page&search=" . urlencode($search);
 
-// Fetch API data
 function fetchApiData($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -23,13 +22,15 @@ function fetchApiData($url) {
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    if ($httpCode !== 200) {
-        return false; // Fetch failed
+
+    if ($httpCode !== 200 || !$response) {
+        return ['error' => 'Unable to fetch data from the API. HTTP Code: ' . $httpCode];
     }
-    return $response;
+
+    return json_decode($response, true);
 }
 
-$response = fetchApiData($url);
+$response = file_get_contents($url);
 
 if ($response === false) {
     echo "<p style='color: red;'>Error: Unable to fetch data from the API. Please check if `get_data.php` is accessible.</p>";
@@ -37,10 +38,12 @@ if ($response === false) {
 } else {
     $data = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        echo "<p>Error: Invalid JSON response from API: " . json_last_error_msg() . "</p>";
+        echo "<p style='color: red;'>Error: Invalid JSON response from API: " . json_last_error_msg() . "</p>";
         $data = ['error' => 'Invalid JSON response.'];
     }
 }
+
+
 
 ?>
 
