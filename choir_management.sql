@@ -134,6 +134,25 @@ CREATE TABLE `User` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- 表的结构 `UploadedFiles`
+--
+
+CREATE TABLE `UploadedFiles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `uploaded_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 转存表中的数据 `UploadedFiles`
+--
+
+INSERT INTO `UploadedFiles` (`file_name`, `file_path`, `uploaded_at`) VALUES
+('example.csv', '/uploads/example.csv', '2024-11-16 10:00:00');
+
+--
 -- 转储表的索引
 --
 
