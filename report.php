@@ -2,11 +2,12 @@
 require 'db_connection.php';
 
 try {
-    // Fetch all uploaded files
+    // Retrieve all file records from the database
     $stmt = $conn->prepare("SELECT * FROM UploadedFiles ORDER BY uploaded_at DESC");
     $stmt->execute();
-    $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+    $result = $stmt->get_result();
+    $files = $result->fetch_all(MYSQLI_ASSOC);
+} catch (Exception $e) {
     echo "Error fetching files: " . $e->getMessage();
     $files = [];
 }
@@ -22,7 +23,7 @@ try {
 <body>
     <h1>Reports</h1>
 
-    <!-- Uploaded Files Section -->
+    <!-- Display uploaded files -->
     <h2>Uploaded Files</h2>
     <?php if (count($files) > 0): ?>
         <table>
