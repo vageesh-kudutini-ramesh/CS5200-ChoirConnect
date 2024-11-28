@@ -6,20 +6,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     $fileName = basename($_FILES['csv_file']['name']);
     $filePath = $uploadDir . $fileName;
 
-    // Create upload directory if it doesn't exist
+    // Create the upload directory if it does not exist
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }
 
-    // Move uploaded file
+    // Move the uploaded file to the "uploads" folder
     if (move_uploaded_file($_FILES['csv_file']['tmp_name'], $filePath)) {
         try {
-            // Log file details in the database
+            // Log the file details in the database
             $stmt = $conn->prepare("INSERT INTO UploadedFiles (file_name, file_path, uploaded_at) VALUES (?, ?, NOW())");
-            $stmt->execute([$fileName, $filePath]);
+            $stmt->bind_param("ss", $fileName, $filePath);
+            $stmt->execute();
 
             echo "File uploaded and logged successfully!";
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             echo "Error logging file: " . $e->getMessage();
         }
     } else {
