@@ -1,0 +1,23 @@
+/*
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "choir_management";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+*/
+
+
+
+"Member ID",Date,Status,Reason
+<br />
+<b>Warning</b>:  Undefined property: PDOStatement::$num_rows in <b>/Applications/XAMPP/xamppfiles/htdocs/CS5200FinalProject/membership_portal/export_data.php</b> on line <b>17</b><br />
+<br />
+<b>Fatal error</b>:  Uncaught Error: Call to undefined method PDO::close() in /Applications/XAMPP/xamppfiles/htdocs/CS5200FinalProject/membership_portal/export_data.php:29
+Stack trace:
+#0 {main}
+  thrown in <b>/Applications/XAMPP/xamppfiles/htdocs/CS5200FinalProject/membership_portal/export_data.php</b> on line <b>29</b><br />

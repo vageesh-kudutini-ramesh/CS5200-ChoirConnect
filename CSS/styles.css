@@ -261,3 +261,43 @@ table tr:nth-child(even) {
 }
 
 
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+table, th, td {
+    border: 1px solid #ddd;
+}
+th, td {
+    text-align: center;
+    padding: 8px;
+}
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+/* Pagination Styling */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.pagination a {
+    padding: 8px 16px;
+    margin: 0 4px;
+    text-decoration: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+}
+.pagination a.active {
+    background-color: #0056b3;
+    pointer-events: none;
+}
+.pagination a:hover {
+    background-color: #0056b3;
+}

@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['add_attendance'])) {
             // Handle Attendance Entry
             $member_id = $_POST['member_id'] ?? null;
-            $date = $_POST['attendance_date'] ?? null; // Use 'attendance_date' to match the form
+            $date = $_POST['attendance_date'] ?? null;
             $status = 1; // Default to "Present"
-            $absence_reason = "N/A"; // Default reason
+            $absence_reason = $_POST['absence_reason'] ?? "N/A"; // Accept reason or default to "N/A"
 
             if (!$member_id || !$date) {
                 throw new Exception("Member ID and Attendance Date are required.");
@@ -25,13 +25,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Handle Dues Entry
             $member_id = $_POST['member_id'] ?? null;
             $amount = $_POST['dues_amount'] ?? null;
+            $payment_date = $_POST['payment_date'] ?? null;
+            $payment_method = $_POST['payment_method'] ?? null;
+            $payment_frequency = $_POST['payment_frequency'] ?? null;
 
-            if (!$member_id || !$amount) {
-                throw new Exception("Member ID and Dues Amount are required.");
+            // Validate required fields
+            if (!$member_id || !$amount || !$payment_date || !$payment_method || !$payment_frequency) {
+                throw new Exception("All fields are required for Dues Entry.");
             }
 
-            $stmt = $conn->prepare("INSERT INTO Dues (member_id, amount) VALUES (?, ?)");
-            $stmt->execute([$member_id, $amount]);
+            // Validate payment method
+            $valid_methods = ['Venmo', 'Check', 'Mail'];
+            if (!in_array($payment_method, $valid_methods, true)) {
+                throw new Exception("Invalid payment method. Allowed values: Venmo, Check, Mail.");
+            }
+
+            // Validate payment frequency
+            $valid_frequencies = ['Monthly', 'Yearly'];
+            if (!in_array($payment_frequency, $valid_frequencies, true)) {
+                throw new Exception("Invalid payment frequency. Allowed values: Monthly, Yearly.");
+            }
+
+            $stmt = $conn->prepare("INSERT INTO Dues (member_id, amount, payment_date, payment_method, payment_frequency) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$member_id, $amount, $payment_date, $payment_method, $payment_frequency]);
             $response['success'] = "Dues record inserted successfully!";
         } else {
             throw new Exception("Invalid operation.");
@@ -51,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <style>
             body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
             .message { font-size: 18px; margin-bottom: 20px; }
+            .redirect-message { font-size: 16px; }
         </style>
         <script>
             setTimeout(() => { window.location.href = 'data_entry.php'; }, 5000);
@@ -58,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </head>
     <body>
         <p class='message'>" . htmlspecialchars($response['success'] ?? $response['error'] ?? 'Unknown error.') . "</p>
-        <p>You will be redirected back to the Data Entry page in 5 seconds.</p>
-        <p><a href='data_entry.php'>Click here</a> if you are not redirected automatically.</p>
+        <p class='redirect-message'>You will be redirected back to the Data Entry page in 5 seconds.</p>
+        <p class='redirect-message'><a href='data_entry.php'>Click here</a> if you are not redirected automatically.</p>
     </body>
     </html>";
     exit;

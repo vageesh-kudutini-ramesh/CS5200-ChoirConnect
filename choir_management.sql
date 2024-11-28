@@ -24,6 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+
 -- 表的结构 `Attendance`
 --
 
@@ -48,22 +49,27 @@ INSERT INTO `Attendance` (`attendance_id`, `member_id`, `date`, `status`, `absen
 -- 表的结构 `Dues`
 --
 
+DROP TABLE IF EXISTS `Dues`;
+
 CREATE TABLE `Dues` (
-  `dues_id` int(11) NOT NULL,
-  `member_id` int(11) DEFAULT NULL,
-  `amount` decimal(10,2) DEFAULT NULL,
-  `payment_date` date DEFAULT NULL,
-  `payment_method` enum('Venmo','Check','Mail') DEFAULT NULL,
-  `payment_frequency` enum('Monthly','Yearly') DEFAULT NULL
+  `dues_id` int(11) NOT NULL AUTO_INCREMENT,
+  `member_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_date` date NOT NULL,
+  `payment_method` ENUM('Venmo', 'Check', 'Mail') DEFAULT 'Cash',
+  `payment_frequency` ENUM('Monthly', 'Yearly') DEFAULT 'Monthly',
+  PRIMARY KEY (`dues_id`),
+  FOREIGN KEY (`member_id`) REFERENCES `Member`(`member_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- 转存表中的数据 `Dues`
 --
 
-INSERT INTO `Dues` (`dues_id`, `member_id`, `amount`, `payment_date`, `payment_method`, `payment_frequency`) VALUES
-(1, 1, 50.00, '2023-03-01', 'Venmo', 'Monthly'),
-(2, 2, 100.00, '2023-03-01', 'Check', 'Yearly');
+INSERT INTO `Dues` (`member_id`, `amount`, `payment_date`, `payment_method`, `payment_frequency`) VALUES
+(3, 150.00, '2024-01-01', 'Cash', 'Yearly');
+
 
 -- --------------------------------------------------------
 

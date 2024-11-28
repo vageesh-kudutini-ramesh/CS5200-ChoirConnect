@@ -1,35 +1,52 @@
+<?php
+require 'db_connection.php';
+
+try {
+    // Fetch all uploaded files
+    $stmt = $conn->prepare("SELECT * FROM UploadedFiles ORDER BY uploaded_at DESC");
+    $stmt->execute();
+    $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching files: " . $e->getMessage();
+    $files = [];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports</title>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Donations and Dues Report</h2>
-    <?php
-    // Example data, replace with database fetch logic
-    $reports = [
-        ['member_id' => 1, 'donation' => 100, 'dues' => 50],
-        ['member_id' => 2, 'donation' => 200, 'dues' => 60],
-    ];
+    <h1>Reports</h1>
 
-    echo "<table>
-            <tr>
-                <th>Member ID</th>
-                <th>Donation</th>
-                <th>Dues</th>
-            </tr>";
-    foreach ($reports as $report) {
-        echo "<tr>
-                <td>{$report['member_id']}</td>
-                <td>\${$report['donation']}</td>
-                <td>\${$report['dues']}</td>
-              </tr>";
-    }
-    echo "</table>";
-    ?>
+    <!-- Uploaded Files Section -->
+    <h2>Uploaded Files</h2>
+    <?php if (count($files) > 0): ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Uploaded At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($files as $file): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($file['file_name']); ?></td>
+                        <td><?php echo htmlspecialchars($file['uploaded_at']); ?></td>
+                        <td>
+                            <a href="<?php echo htmlspecialchars($file['file_path']); ?>" download>Download</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>No files uploaded yet.</p>
+    <?php endif; ?>
 </body>
 </html>
-

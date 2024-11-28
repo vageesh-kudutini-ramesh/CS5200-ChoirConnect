@@ -47,6 +47,7 @@ if (in_array($type, ['attendance', 'dues'])) {
         <a href="data_entry.php">Data Entry</a>
         <a href="?type=attendance">Attendance</a>
         <a href="?type=dues">Dues</a>
+        <a href="report.php">Reports</a>
         <a href="logout.php">Logout</a>
     </nav>
 
