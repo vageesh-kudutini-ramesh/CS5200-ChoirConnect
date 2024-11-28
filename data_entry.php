@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance and Dues Entry</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { margin-bottom: 30px; }
+        h1, h2 { color: #333; }
+        label { margin-right: 10px; }
+        input { margin-right: 10px; }
+        button { padding: 5px 10px; }
+    </style>
 </head>
 <body>
     <h1>Attendance and Dues Entry</h1>
@@ -18,8 +26,6 @@
         <input type="date" id="attendance_date" name="attendance_date" required>
         <button type="submit">Submit Attendance</button>
     </form>
-
-    <hr>
 
     <!-- Dues Entry Form -->
     <h2>Enter Dues</h2>
