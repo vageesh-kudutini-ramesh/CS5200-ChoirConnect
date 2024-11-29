@@ -1,7 +1,10 @@
 <?php
 require 'db_connection.php';
+session_start();
 
-if (isset($_GET['delete']) && !empty($_GET['delete'])) {
+$role = $_SESSION['role'] ?? '';
+
+if (isset($_GET['delete']) && !empty($_GET['delete']) && $role === 'Admin') {
     $fileId = $_GET['delete'];
     try {
         // Retrieve the file path from the database
@@ -42,10 +45,11 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f0f2f5;
             color: #333;
             margin: 0;
             padding: 20px;
@@ -53,48 +57,59 @@ try {
         header {
             background-color: #007bff;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            border-radius: 5px;
+        }
+        h2 {
+            color: #007bff;
+            text-align: center;
+            margin-top: 40px;
         }
         table {
-            width: 100%;
+            width: 80%;
+            margin: 20px auto;
             border-collapse: collapse;
-            margin-bottom: 20px;
             background-color: #fff;
-            border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        table th, table td {
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
             padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            text-align: center;
         }
-        table th {
+        th {
             background-color: #007bff;
-            color: #fff;
-        }
-        table tr:hover {
-            background-color: #f1f1f1;
+            color: white;
         }
         .button {
-            background-color: #007bff;
-            color: #ffffff;
             padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
             text-align: center;
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
             text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
         }
         .button:hover {
             background-color: #0056b3;
         }
-        .delete-button {
-            color: #ff0000;
+        a.delete-button {
+            color: #dc3545;
             text-decoration: none;
         }
-        .delete-button:hover {
-            text-decoration: underline;
+        a.delete-button:hover {
+            color: #a71d2a;
+        }
+        hr {
+            border: 1px solid #ddd;
+            margin: 40px 0;
         }
     </style>
 </head>
@@ -119,19 +134,20 @@ try {
                         <td><?php echo htmlspecialchars($file['file_name']); ?></td>
                         <td><?php echo htmlspecialchars($file['uploaded_at']); ?></td>
                         <td>
-                            <a href="<?php echo htmlspecialchars($file['file_path']); ?>" download>Download</a> |
-                            <a href="?delete=<?php echo htmlspecialchars($file['id']); ?>" class="delete-button" onclick="return confirm('Are you sure you want to delete this file?');">Delete</a>
+                            <a href="<?php echo htmlspecialchars($file['file_path']); ?>" download><i class="fas fa-download"></i> Download</a>
+                            <?php if ($role === 'Admin'): ?>
+                                | <a href="?delete=<?php echo htmlspecialchars($file['id']); ?>" class="delete-button" onclick="return confirm('Are you sure you want to delete this file?');"><i class="fas fa-trash-alt"></i> Delete</a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>No files uploaded yet.</p>
+        <p style="text-align: center;">No files uploaded yet.</p>
     <?php endif; ?>
 
     <!-- Back to Dashboard Button -->
-    <br><br>
-    <a href="dashboard.php" class="button">Back to Dashboard</a>
+    <a href="dashboard.php" class="button"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
 </body>
 </html>

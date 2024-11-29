@@ -5,6 +5,8 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
+$role = $_SESSION['role'] ?? '';
+
 // Backend integration variables
 $type = $_GET['type'] ?? ''; // Default to empty string to avoid fetching data
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -35,92 +37,97 @@ if (in_array($type, ['attendance', 'dues'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f0f2f5;
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
         header {
             background-color: #007bff;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            border-radius: 5px;
         }
         nav {
-            margin: 20px 0;
-            text-align: center;
+            background-color: #333;
+            overflow: hidden;
         }
         nav a {
-            margin: 0 10px;
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 20px;
             text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
         }
         nav a:hover {
-            text-decoration: underline;
-        }
-        form {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        form input[type="text"] {
-            padding: 10px;
-            width: 250px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        form button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        form button:hover {
-            background-color: #0056b3;
+            background-color: #ddd;
+            color: black;
         }
         table {
-            width: 100%;
+            width: 90%;
+            margin: 20px auto;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        table th, table td {
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
             padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            text-align: center;
         }
-        table th {
+        th {
             background-color: #007bff;
-            color: #fff;
-        }
-        table tr:hover {
-            background-color: #f1f1f1;
+            color: white;
         }
         .pagination {
             text-align: center;
             margin-top: 20px;
         }
         .pagination a {
-            margin: 0 5px;
+            color: black;
+            padding: 8px 16px;
             text-decoration: none;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin: 0 4px;
         }
         .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+        }
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+        form {
+            text-align: center;
+            margin: 20px;
+        }
+        input[type=text] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button[type=submit] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type=submit]:hover {
             background-color: #0056b3;
         }
-        .pagination a:hover {
-            background-color: #0056b3;
+        .error {
+            color: red;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -131,11 +138,13 @@ if (in_array($type, ['attendance', 'dues'])) {
     </header>
 
     <nav>
-        <a href="data_entry.php">Data Entry</a>
-        <a href="?type=attendance">Attendance</a>
-        <a href="?type=dues">Dues</a>
-        <a href="report.php">Reports</a>
-        <a href="logout.php">Logout</a>
+        <?php if ($role !== 'Member'): ?>
+            <a href="data_entry.php"><i class="fas fa-pencil-alt"></i> Data Entry</a>
+        <?php endif; ?>
+        <a href="?type=attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
+        <a href="?type=dues"><i class="fas fa-dollar-sign"></i> Dues</a>
+        <a href="report.php"><i class="fas fa-file-alt"></i> Reports</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>
 
     <?php if (in_array($type, ['attendance', 'dues'])): ?>
@@ -143,11 +152,11 @@ if (in_array($type, ['attendance', 'dues'])) {
             <input type="hidden" name="type" value="<?php echo htmlspecialchars($type); ?>">
             <label for="search">Search:</label>
             <input type="text" name="search" id="search" placeholder="Enter Member ID or Date" value="<?php echo htmlspecialchars($search); ?>">
-            <button type="submit">Search</button>
+            <button type="submit"><i class="fas fa-search"></i> Search</button>
         </form>
 
         <?php if (isset($data['error'])): ?>
-            <p style="color: red; text-align: center;">Error: <?php echo htmlspecialchars($data['error']); ?></p>
+            <p class="error">Error: <?php echo htmlspecialchars($data['error']); ?></p>
         <?php else: ?>
             <table>
                 <thead>

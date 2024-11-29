@@ -4,6 +4,7 @@ $users = [
     'admin' => ['password' => 'admin123', 'role' => 'Admin'],
     'treasurer' => ['password' => 'treasurer123', 'role' => 'Treasurer'],
     'secretary' => ['password' => 'secretary123', 'role' => 'Secretary'],
+    'member' => ['password' => 'member123', 'role' => 'Member'],
 ];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -25,11 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance and Dues Entry</title>
+    <title>Attendance and Dues Entry - Sea Change Corral Choir Management System</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #e9ecef;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
             color: #495057;
             margin: 0;
             padding: 0;
@@ -37,6 +39,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             justify-content: center;
             align-items: center;
             height: 100vh;
+            position: relative;
+        }
+        .background-text {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 56px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
         }
         header {
             background-color: #007bff;
@@ -48,19 +62,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         .login-container {
             width: 350px;
+            max-width: 100%;
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             text-align: center;
+            box-sizing: border-box;
         }
         input[type="text"], input[type="password"] {
-            width: 100%;
+            width: calc(100% - 24px);
             padding: 12px;
             margin-bottom: 15px;
             border: 1px solid #ced4da;
             border-radius: 5px;
             font-size: 16px;
+            box-sizing: border-box;
         }
         button {
             width: 100%;
@@ -75,14 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         button:hover {
             background-color: #0056b3;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        .logout-message {
-            color: #28a745;
-            font-size: 14px;
-            margin-bottom: 10px;
         }
         .error-message {
             color: #dc3545;
@@ -120,14 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
+    <div class="background-text">Sea Change Corral Choir Management System</div>
     <div class="login-container">
         <h2>Login</h2>
-        <!-- Display logout success message if redirected from logout.php -->
-        <?php
-        if (isset($_GET['logout']) && $_GET['logout'] == 'success') {
-            echo "<p class='logout-message' style='color: #007bff;'>You have been logged out successfully.</p>";
-        }
-        ?>
+        
         <form method="POST" action="">
             <input type="text" name="username" placeholder="Username" required><br>
             <input type="password" name="password" placeholder="Password" required><br>
