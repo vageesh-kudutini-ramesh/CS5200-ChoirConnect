@@ -23,34 +23,26 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
---
-
 -- 表的结构 `Attendance`
---
-
 CREATE TABLE `Attendance` (
-  `attendance_id` int(11) NOT NULL,
+  `attendance_id` int(11) NOT NULL AUTO_INCREMENT,
   `member_id` int(11) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `status` tinyint(1) DEFAULT NULL,
-  `absence_reason` varchar(255) DEFAULT NULL
+  `absence_reason` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`attendance_id`),
+  KEY `idx_member_id` (`member_id`),
+  KEY `idx_date` (`date`),
+  FOREIGN KEY (`member_id`) REFERENCES `Member`(`member_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- 转存表中的数据 `Attendance`
---
-
 INSERT INTO `Attendance` (`attendance_id`, `member_id`, `date`, `status`, `absence_reason`) VALUES
 (1, 1, '2024-11-15', 1, 'N/A');
 
 -- --------------------------------------------------------
 
---
 -- 表的结构 `Dues`
---
-
-DROP TABLE IF EXISTS `Dues`;
-
 CREATE TABLE `Dues` (
   `dues_id` int(11) NOT NULL AUTO_INCREMENT,
   `member_id` int(11) NOT NULL,
@@ -59,26 +51,19 @@ CREATE TABLE `Dues` (
   `payment_method` ENUM('Venmo', 'Check', 'Mail') DEFAULT 'Cash',
   `payment_frequency` ENUM('Monthly', 'Yearly') DEFAULT 'Monthly',
   PRIMARY KEY (`dues_id`),
+  KEY `member_id` (`member_id`),
   FOREIGN KEY (`member_id`) REFERENCES `Member`(`member_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
---
 -- 转存表中的数据 `Dues`
---
-
 INSERT INTO `Dues` (`member_id`, `amount`, `payment_date`, `payment_method`, `payment_frequency`) VALUES
 (3, 150.00, '2024-01-01', 'Cash', 'Yearly');
 
-
 -- --------------------------------------------------------
 
---
 -- 表的结构 `Member`
---
-
 CREATE TABLE `Member` (
-  `member_id` int(11) NOT NULL,
+  `member_id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
@@ -87,56 +72,49 @@ CREATE TABLE `Member` (
   `join_date` date DEFAULT NULL,
   `voice_part_id` int(11) DEFAULT NULL,
   `status_flag` tinyint(1) DEFAULT NULL,
-  `notes` text DEFAULT NULL
+  `notes` text DEFAULT NULL,
+  `name_in_donor_list` varchar(255) DEFAULT NULL, -- 新增列
+  PRIMARY KEY (`member_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- 转存表中的数据 `Member`
---
-
-INSERT INTO `Member` (`member_id`, `first_name`, `last_name`, `email`, `phone_number`, `address`, `join_date`, `voice_part_id`, `status_flag`, `notes`) VALUES
-(1, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '123 Main St', '2023-01-01', NULL, 1, 'Choir Leader'),
-(2, 'Jane', 'Smith', 'jane.smith@example.com', '987-654-3210', '456 Elm St', '2023-02-15', NULL, 1, 'Section Leader');
+INSERT INTO `Member` (`member_id`, `first_name`, `last_name`, `email`, `phone_number`, `address`, `join_date`, `voice_part_id`, `status_flag`, `notes`, `name_in_donor_list`) VALUES
+(1, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '123 Main St', '2023-01-01', NULL, 1, 'Choir Leader', NULL),
+(2, 'Jane', 'Smith', 'jane.smith@example.com', '987-654-3210', '456 Elm St', '2023-02-15', NULL, 1, 'Section Leader', NULL);
 
 -- --------------------------------------------------------
 
---
 -- 表的结构 `Role`
---
-
 CREATE TABLE `Role` (
-  `role_id` int(11) NOT NULL,
-  `role_name` varchar(50) DEFAULT NULL
+  `role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- 转存表中的数据 `Role`
---
-
-INSERT INTO `Role` (`role_id`, `role_name`) VALUES
-(1, 'Admin'),
-(2, 'Treasurer'),
-(3, 'Secretary'),
-(4, 'Member');
+-- 插入预定义角色数据
+INSERT INTO `Role` (`role_name`) VALUES
+('Admin'),
+('Manager'),
+('Member');
 
 -- --------------------------------------------------------
 
---
 -- 表的结构 `User`
---
-
 CREATE TABLE `User` (
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `member_id` int(11) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL
+  `role_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`),
+  FOREIGN KEY (`member_id`) REFERENCES `Member` (`member_id`),
+  FOREIGN KEY (`role_id`) REFERENCES `Role` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- 表的结构 `UploadedFiles`
---
+-- --------------------------------------------------------
 
+-- 表的结构 `UploadedFiles`
 CREATE TABLE `UploadedFiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `file_name` varchar(255) NOT NULL,
@@ -145,16 +123,15 @@ CREATE TABLE `UploadedFiles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- 转存表中的数据 `UploadedFiles`
---
-
 INSERT INTO `UploadedFiles` (`file_name`, `file_path`, `uploaded_at`) VALUES
 ('example.csv', '/uploads/example.csv', '2024-11-16 10:00:00');
 
---
--- 转储表的索引
---
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 --
 -- 表的索引 `Attendance`
@@ -193,7 +170,7 @@ ALTER TABLE `User`
   ADD KEY `role_id` (`role_id`);
 
 --
--- 在导出的表使用AUTO_INCREMENT
+-- 使用表AUTO_INCREMENT
 --
 
 --
