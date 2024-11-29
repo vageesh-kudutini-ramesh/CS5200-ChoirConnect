@@ -64,19 +64,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <meta charset='UTF-8'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <title>Submission Status</title>
+        <link rel='stylesheet' href='styles.css'> <!-- Assuming you have a shared stylesheet -->
         <style>
-            body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-            .message { font-size: 18px; margin-bottom: 20px; }
-            .redirect-message { font-size: 16px; }
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                text-align: center;
+                background-color: #ffffff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .message {
+                font-size: 18px;
+                color: #333333;
+                margin-bottom: 20px;
+            }
+            .redirect-message {
+                font-size: 16px;
+                color: #007bff;
+            }
+            .redirect-message a {
+                color: #007bff;
+                text-decoration: none;
+            }
+            .redirect-message a:hover {
+                text-decoration: underline;
+            }
         </style>
         <script>
             setTimeout(() => { window.location.href = 'data_entry.php'; }, 5000);
         </script>
     </head>
     <body>
-        <p class='message'>" . htmlspecialchars($response['success'] ?? $response['error'] ?? 'Unknown error.') . "</p>
-        <p class='redirect-message'>You will be redirected back to the Data Entry page in 5 seconds.</p>
-        <p class='redirect-message'><a href='data_entry.php'>Click here</a> if you are not redirected automatically.</p>
+        <div class='container'>
+            <p class='message'>" . htmlspecialchars($response['success'] ?? $response['error'] ?? 'Unknown error.') . "</p>
+            <p class='redirect-message'>You will be redirected back to the Data Entry page in 5 seconds.</p>
+            <p class='redirect-message'><a href='data_entry.php'>Click here</a> if you are not redirected automatically.</p>
+        </div>
     </body>
     </html>";
     exit;

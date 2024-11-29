@@ -26,7 +26,6 @@ if (in_array($type, ['attendance', 'dues'])) {
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +35,94 @@ if (in_array($type, ['attendance', 'dues'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form input[type="text"] {
+            padding: 10px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #0056b3;
+        }
+        .pagination a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -60,7 +147,7 @@ if (in_array($type, ['attendance', 'dues'])) {
         </form>
 
         <?php if (isset($data['error'])): ?>
-            <p style="color: red;">Error: <?php echo htmlspecialchars($data['error']); ?></p>
+            <p style="color: red; text-align: center;">Error: <?php echo htmlspecialchars($data['error']); ?></p>
         <?php else: ?>
             <table>
                 <thead>
@@ -72,6 +159,9 @@ if (in_array($type, ['attendance', 'dues'])) {
                             <th>Reason</th>
                         <?php elseif ($type === 'dues'): ?>
                             <th>Amount</th>
+                            <th>Payment Date</th>
+                            <th>Payment Method</th>
+                            <th>Payment Frequency</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -85,6 +175,9 @@ if (in_array($type, ['attendance', 'dues'])) {
                                 <td><?php echo htmlspecialchars($record['absence_reason']); ?></td>
                             <?php elseif ($type === 'dues'): ?>
                                 <td><?php echo htmlspecialchars($record['amount']); ?></td>
+                                <td><?php echo htmlspecialchars($record['payment_date']); ?></td>
+                                <td><?php echo htmlspecialchars($record['payment_method']); ?></td>
+                                <td><?php echo htmlspecialchars($record['payment_frequency']); ?></td>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
@@ -103,5 +196,3 @@ if (in_array($type, ['attendance', 'dues'])) {
     <?php endif; ?>
 </body>
 </html>
-
-
