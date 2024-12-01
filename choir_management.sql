@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2024-11-16 05:19:43
+-- 生成日期： 2024-12-01 00:53:39
 -- 服务器版本： 10.4.28-MariaDB
 -- PHP 版本： 8.2.4
 
@@ -18,52 +18,67 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 数据库： `choir_management`
+-- 数据库： `choir_connect`
 --
 
 -- --------------------------------------------------------
 
+--
 -- 表的结构 `Attendance`
+--
+
 CREATE TABLE `Attendance` (
-  `attendance_id` int(11) NOT NULL AUTO_INCREMENT,
+  `attendance_id` int(11) NOT NULL,
   `member_id` int(11) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `status` tinyint(1) DEFAULT NULL,
-  `absence_reason` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`attendance_id`),
-  KEY `idx_member_id` (`member_id`),
-  KEY `idx_date` (`date`),
-  FOREIGN KEY (`member_id`) REFERENCES `Member`(`member_id`) ON DELETE CASCADE
+  `absence_reason` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
 -- 转存表中的数据 `Attendance`
+--
+
 INSERT INTO `Attendance` (`attendance_id`, `member_id`, `date`, `status`, `absence_reason`) VALUES
-(1, 1, '2024-11-15', 1, 'N/A');
+(31, 1, '2024-11-05', 1, 'Family emergencies'),
+(32, 2, '2024-11-12', 1, 'sick'),
+(33, 1, '2024-11-13', 1, '....'),
+(34, 1, '2024-12-01', 1, 'Sick');
 
 -- --------------------------------------------------------
 
+--
 -- 表的结构 `Dues`
+--
+
 CREATE TABLE `Dues` (
-  `dues_id` int(11) NOT NULL AUTO_INCREMENT,
-  `member_id` int(11) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `payment_date` date NOT NULL,
-  `payment_method` ENUM('Venmo', 'Check', 'Mail') DEFAULT 'Cash',
-  `payment_frequency` ENUM('Monthly', 'Yearly') DEFAULT 'Monthly',
-  PRIMARY KEY (`dues_id`),
-  KEY `member_id` (`member_id`),
-  FOREIGN KEY (`member_id`) REFERENCES `Member`(`member_id`) ON DELETE CASCADE
+  `dues_id` int(11) NOT NULL,
+  `member_id` int(11) DEFAULT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  `payment_date` date DEFAULT NULL,
+  `payment_method` enum('Venmo','Check','Mail') DEFAULT NULL,
+  `payment_frequency` enum('Monthly','Yearly') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
 -- 转存表中的数据 `Dues`
-INSERT INTO `Dues` (`member_id`, `amount`, `payment_date`, `payment_method`, `payment_frequency`) VALUES
-(3, 150.00, '2024-01-01', 'Cash', 'Yearly');
+--
+
+INSERT INTO `Dues` (`dues_id`, `member_id`, `amount`, `payment_date`, `payment_method`, `payment_frequency`) VALUES
+(30, 1, 500.00, '2024-11-12', 'Venmo', 'Monthly'),
+(31, 1, 100.00, '2024-11-14', 'Check', 'Yearly'),
+(32, 1, 1000.00, '2024-11-13', 'Mail', 'Yearly'),
+(33, 2, 50.00, '2024-11-11', 'Check', 'Yearly'),
+(34, 1, 200.00, '2024-12-01', 'Venmo', 'Monthly');
 
 -- --------------------------------------------------------
 
+--
 -- 表的结构 `Member`
+--
+
 CREATE TABLE `Member` (
-  `member_id` int(11) NOT NULL AUTO_INCREMENT,
+  `member_id` int(11) NOT NULL,
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
@@ -73,71 +88,86 @@ CREATE TABLE `Member` (
   `voice_part_id` int(11) DEFAULT NULL,
   `status_flag` tinyint(1) DEFAULT NULL,
   `notes` text DEFAULT NULL,
-  `name_in_donor_list` varchar(255) DEFAULT NULL, -- 新增列
-  PRIMARY KEY (`member_id`)
+  `name_in_donor_list` enum('YES','NO') DEFAULT 'NO'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
 -- 转存表中的数据 `Member`
+--
+
 INSERT INTO `Member` (`member_id`, `first_name`, `last_name`, `email`, `phone_number`, `address`, `join_date`, `voice_part_id`, `status_flag`, `notes`, `name_in_donor_list`) VALUES
 (1, 'John', 'Doe', 'john.doe@example.com', '123-456-7890', '123 Main St', '2023-01-01', NULL, 1, 'Choir Leader', NULL),
-(2, 'Jane', 'Smith', 'jane.smith@example.com', '987-654-3210', '456 Elm St', '2023-02-15', NULL, 1, 'Section Leader', NULL);
+(2, 'Jane', 'Smith', 'jane.smith@example.com', '987-654-3210', '456 Elm St', '2023-02-15', NULL, 1, 'Section Leader', NULL),
+(3, 'Alice', 'Brown', 'alice.brown@example.com', '123-456-7890', '789 Maple St', '2024-01-01', NULL, NULL, NULL, 'YES');
 
 -- --------------------------------------------------------
 
+--
 -- 表的结构 `Role`
+--
+
 CREATE TABLE `Role` (
-  `role_id` int(11) NOT NULL AUTO_INCREMENT,
-  `role_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`role_id`)
+  `role_id` int(11) NOT NULL,
+  `role_name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 插入预定义角色数据
-INSERT INTO `Role` (`role_name`) VALUES
-('Admin'),
-('Manager'),
-('Member');
+--
+-- 转存表中的数据 `Role`
+--
+
+INSERT INTO `Role` (`role_id`, `role_name`) VALUES
+(1, 'Admin'),
+(2, 'Treasurer'),
+(3, 'Secretary'),
+(4, 'Member');
 
 -- --------------------------------------------------------
 
+--
+-- 表的结构 `UploadedFiles`
+--
+
+CREATE TABLE `UploadedFiles` (
+  `id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `uploaded_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 转存表中的数据 `UploadedFiles`
+--
+
+INSERT INTO `UploadedFiles` (`id`, `file_name`, `file_path`, `uploaded_at`) VALUES
+(8, 'test.csv', 'uploads/test.csv', '2024-11-29 07:14:46'),
+(11, 'test.txt', 'uploads/test.txt', '2024-11-29 18:57:42'),
+(12, 'example.txt', 'uploads/example.txt', '2024-11-30 17:47:35');
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `User`
+--
+
 CREATE TABLE `User` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `member_id` int(11) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `username` (`username`),
-  FOREIGN KEY (`member_id`) REFERENCES `Member` (`member_id`),
-  FOREIGN KEY (`role_id`) REFERENCES `Role` (`role_id`)
+  `role_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
--- 表的结构 `UploadedFiles`
-CREATE TABLE `UploadedFiles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `file_name` varchar(255) NOT NULL,
-  `file_path` varchar(255) NOT NULL,
-  `uploaded_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- 转存表中的数据 `UploadedFiles`
-INSERT INTO `UploadedFiles` (`file_name`, `file_path`, `uploaded_at`) VALUES
-('example.csv', '/uploads/example.csv', '2024-11-16 10:00:00');
-
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- 转储表的索引
+--
 
 --
 -- 表的索引 `Attendance`
 --
 ALTER TABLE `Attendance`
   ADD PRIMARY KEY (`attendance_id`),
+  ADD UNIQUE KEY `member_id` (`member_id`,`date`),
+  ADD UNIQUE KEY `unique_member_date` (`member_id`,`date`),
   ADD KEY `idx_member_id` (`member_id`),
   ADD KEY `idx_date` (`date`);
 
@@ -161,6 +191,12 @@ ALTER TABLE `Role`
   ADD PRIMARY KEY (`role_id`);
 
 --
+-- 表的索引 `UploadedFiles`
+--
+ALTER TABLE `UploadedFiles`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 表的索引 `User`
 --
 ALTER TABLE `User`
@@ -170,32 +206,38 @@ ALTER TABLE `User`
   ADD KEY `role_id` (`role_id`);
 
 --
--- 使用表AUTO_INCREMENT
+-- 在导出的表使用AUTO_INCREMENT
 --
 
 --
 -- 使用表AUTO_INCREMENT `Attendance`
 --
 ALTER TABLE `Attendance`
-  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `attendance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- 使用表AUTO_INCREMENT `Dues`
 --
 ALTER TABLE `Dues`
-  MODIFY `dues_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `dues_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- 使用表AUTO_INCREMENT `Member`
 --
 ALTER TABLE `Member`
-  MODIFY `member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用表AUTO_INCREMENT `Role`
 --
 ALTER TABLE `Role`
   MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- 使用表AUTO_INCREMENT `UploadedFiles`
+--
+ALTER TABLE `UploadedFiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- 使用表AUTO_INCREMENT `User`
