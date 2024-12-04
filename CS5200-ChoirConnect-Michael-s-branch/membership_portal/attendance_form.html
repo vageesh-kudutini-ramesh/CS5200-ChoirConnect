@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Form</title>
+</head>
+<body>
+    <h2>Attendance Form</h2>
+    <form action="submit_attendance.php" method="post">
+        <label for="member_id">Member:</label>
+        <select id="member_id" name="member_id" required>
+            <?php
+            require 'db_connection.php';
+
+            $sql = "SELECT member_id, first_name, last_name FROM Member";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<option value='" . $row['member_id'] . "'>" . $row['first_name'] . " " . $row['last_name'] . "</option>";
+                }
+            } else {
+                echo "<option value=''>No members found</option>";
+            }
+            $conn->close();
+            ?>
+        </select><br><br>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="1">Present</option>
+            <option value="0">Absent</option>
+        </select><br><br>
+
+        <label for="absence_reason">Absence Reason:</label>
+        <input type="text" id="absence_reason" name="absence_reason"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

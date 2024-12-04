@@ -1,1 +1,0 @@
-{"version":1,"defects":{"FileUploadTest::testFileUploadSuccess":8,"FileUploadTest::testFileUploadFailure":8},"times":{"FileUploadTest::testFileUploadSuccess":0.016,"FileUploadTest::testFileUploadFailure":0.002}}
