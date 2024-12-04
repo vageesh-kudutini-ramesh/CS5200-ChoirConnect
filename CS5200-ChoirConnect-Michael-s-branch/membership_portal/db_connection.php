@@ -6,12 +6,15 @@ error_reporting(E_ALL);
 $host = 'localhost';
 $dbname = 'choir_management';
 $username = 'root';
-$password = 'Enigma@007';
+$password = 'Enigma@007';   
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Enable exceptions for mysqli errors
+
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
+    $conn = new mysqli($host, $username, $password, $dbname);
+    $conn->set_charset("utf8"); // Set character set to avoid charset issues
+} catch (mysqli_sql_exception $e) {
     die("Connection failed: " . $e->getMessage());
 }
 ?>

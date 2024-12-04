@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $address = $_POST['address'];
     $notes = $_POST['notes'];
 
-    // Set the join_date to the current date
     $join_date = date('Y-m-d');
 
     $member_sql = "INSERT INTO Member (first_name, last_name, email, password, phone_number, address, join_date, notes)
@@ -39,8 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($conn->query($user_sql) === TRUE) {
             $_SESSION['registration_success'] = "Registration successful! Please login.";
-            header("Location: UserLogin.php");
-            exit;
+            $success = "Registered Successfully!";
         } else {
             $error = "Error: " . $conn->error;
         }
@@ -52,13 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $conn->close();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Registration - Sea Change Corral Choir Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -144,25 +142,38 @@ $conn->close();
         <h2>Member Registration</h2>
 
         <?php 
-        if (!empty($success)) echo "<p class='success-message'>$success</p>"; 
         if (!empty($error)) echo "<p class='error-message'>$error</p>"; 
         ?>
 
         <form method="POST" action="">
             <input type="text" name="first_name" placeholder="First Name" required>
-            <input type="text" name="last_name" placeholder="Last Name">
+            <input type="text" name="last_name" placeholder="Last Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
-            <input type="text" name="phone_number" placeholder="Phone Number">
-            <textarea name="address" placeholder="Address"></textarea>
-            <textarea name="notes" placeholder="Notes"></textarea>
+            <input type="text" name="phone_number" placeholder="Phone Number" required>
+            <textarea name="address" placeholder="Address" required></textarea>
+            <textarea name="notes" placeholder="Notes" required></textarea>
             <button type="submit">Register</button>
         </form>
-
 
         <!-- Back to Login Link -->
         <p><a href="UserLogin.php">Back to Login</a></p>
     </div>
+
+    <!-- SweetAlert Trigger -->
+    <?php 
+    if (!empty($success)) {
+        echo "<script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Registered Successfully!',
+                text: 'You can now login with your credentials.',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = 'UserLogin.php';
+            });
+        </script>";
+    }
+    ?>
 </body>
 </html>
-

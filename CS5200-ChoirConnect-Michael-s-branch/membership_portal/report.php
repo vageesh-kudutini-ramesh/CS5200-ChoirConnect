@@ -8,9 +8,11 @@ if (isset($_GET['delete']) && !empty($_GET['delete']) && $role === 'Admin') {
     $fileId = $_GET['delete'];
     try {
         // Retrieve the file path from the database
-        $stmt = $conn->prepare("SELECT file_path FROM UploadedFiles WHERE id = :id");
-        $stmt->execute([':id' => $fileId]);
-        $file = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare("SELECT file_path FROM UploadedFiles WHERE id = ?");
+        $stmt->bind_param("i", $fileId); // Bind the file ID
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $file = $result->fetch_assoc();
 
         if ($file) {
             // Delete the file from the server
@@ -19,8 +21,9 @@ if (isset($_GET['delete']) && !empty($_GET['delete']) && $role === 'Admin') {
             }
 
             // Delete the file record from the database
-            $stmt = $conn->prepare("DELETE FROM UploadedFiles WHERE id = :id");
-            $stmt->execute([':id' => $fileId]);
+            $stmt = $conn->prepare("DELETE FROM UploadedFiles WHERE id = ?");
+            $stmt->bind_param("i", $fileId); // Bind the file ID
+            $stmt->execute();
         }
     } catch (Exception $e) {
         echo "Error deleting file: " . htmlspecialchars($e->getMessage());
@@ -28,10 +31,11 @@ if (isset($_GET['delete']) && !empty($_GET['delete']) && $role === 'Admin') {
 }
 
 try {
-    // Retrieve all file records from the database using PDO
+    // Retrieve all file records from the database using MySQLi
     $stmt = $conn->prepare("SELECT * FROM UploadedFiles ORDER BY uploaded_at DESC");
     $stmt->execute();
-    $files = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch data as an associative array
+    $result = $stmt->get_result();
+    $files = $result->fetch_all(MYSQLI_ASSOC); // Fetch data as an associative array
 } catch (Exception $e) {
     echo "Error fetching files: " . htmlspecialchars($e->getMessage());
     $files = [];
