@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <label for="status">Status:</label>
         <select id="status" name="status" required>
-            <option value="1" <?php if ($row['status']) echo "selected"; ?>>Present</option>
+        <!--    <option value="1" <?php if ($row['status']) echo "selected"; ?>>Present</option>-->
             <option value="0" <?php if (!$row['status']) echo "selected"; ?>>Absent</option>
         </select><br><br>
 

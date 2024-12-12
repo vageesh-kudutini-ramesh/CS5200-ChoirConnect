@@ -20,11 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $password = $_POST['password']; // No hashing applied.
     $phone_number = $_POST['phone_number'];
     $address = $_POST['address'];
     $notes = $_POST['notes'];
-
     $join_date = date('Y-m-d');
 
     $member_sql = "INSERT INTO Member (first_name, last_name, email, password, phone_number, address, join_date, notes)
@@ -37,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                      VALUES ('$email', '$password', 4, $member_id)";
 
         if ($conn->query($user_sql) === TRUE) {
-            $_SESSION['registration_success'] = "Registration successful! Please login.";
-            $success = "Registered Successfully!";
+            $_SESSION['registration_success'] = "Member Registration successfully done!";
+            $success = "Member Registered Successfully!";
         } else {
             $error = "Error: " . $conn->error;
         }
@@ -58,6 +57,7 @@ $conn->close();
     <title>Member Registration - Sea Change Corral Choir Management System</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        /* Your CSS styles remain unchanged */
         body {
             font-family: 'Roboto', sans-serif;
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('background.jpg') no-repeat center center fixed;
@@ -90,7 +90,7 @@ $conn->close();
             text-align: center;
             margin-bottom: 20px;
         }
-        input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea {
+        input[type="text"], input[type="email"], input[type="password"], textarea {
             width: calc(100% - 24px);
             padding: 12px;
             margin-bottom: 10px;
@@ -134,17 +134,12 @@ $conn->close();
     </style>
 </head>
 <body>
-    <!-- Title Section -->
     <div class="background-text">Sea Change Corral Choir Management System</div>
-
-    <!-- Registration Form Section -->
     <div class="registration-container">
         <h2>Member Registration</h2>
-
         <?php 
         if (!empty($error)) echo "<p class='error-message'>$error</p>"; 
         ?>
-
         <form method="POST" action="">
             <input type="text" name="first_name" placeholder="First Name" required>
             <input type="text" name="last_name" placeholder="Last Name" required>
@@ -155,22 +150,19 @@ $conn->close();
             <textarea name="notes" placeholder="Notes" required></textarea>
             <button type="submit">Register</button>
         </form>
-
-        <!-- Back to Login Link -->
-        <p><a href="UserLogin.php">Back to Login</a></p>
+        <p><a href="dashboard.php">Back to Dashboard</a></p>
     </div>
 
-    <!-- SweetAlert Trigger -->
     <?php 
     if (!empty($success)) {
         echo "<script>
             Swal.fire({
                 icon: 'success',
-                title: 'Registered Successfully!',
-                text: 'You can now login with your credentials.',
+                title: 'Member Registered Successfully!',
+                text: 'You can now go back to dashboard page.',
                 confirmButtonText: 'OK'
             }).then(() => {
-                window.location.href = 'UserLogin.php';
+                window.location.href = 'dashboard.php';
             });
         </script>";
     }

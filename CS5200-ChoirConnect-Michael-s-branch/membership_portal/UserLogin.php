@@ -5,6 +5,7 @@ $users = [
     'treasurer' => ['password' => 'treasurer123', 'role' => 'Treasurer'],
     'secretary' => ['password' => 'secretary123', 'role' => 'Secretary'],
     'member' => ['password' => 'member123', 'role' => 'Member'],
+    'ben@gmail.com'=>['password' => 'Ben@123', 'role' => 'Member'],
 ];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -116,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         
         <?php if (isset($error)) echo "<p class='error-message'>$error</p>"; ?>
-        <p>Don't have an account? <a href="UserRegistration.php">Register here</a></p>
+      <!--  <p>Don't have an account? <a href="UserRegistration.php">Register here</a></p> -->
     </div>
 </body>
 </html>

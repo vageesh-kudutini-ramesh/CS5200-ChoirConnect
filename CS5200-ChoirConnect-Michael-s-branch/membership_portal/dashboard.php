@@ -143,6 +143,7 @@ if (in_array($type, ['attendance', 'dues'])) {
         <?php endif; ?>
         <a href="?type=attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
         <a href="?type=dues"><i class="fas fa-dollar-sign"></i> Dues</a>
+        <a href="UserRegistration.php"><i class="fas fa-dollar-sign"></i>Add Member</a>
         <a href="report.php"><i class="fas fa-file-alt"></i> Reports</a>
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>

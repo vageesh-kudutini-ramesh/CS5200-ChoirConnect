@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Handle Attendance Entry
             $member_id = $_POST['member_id'] ?? null;
             $date = $_POST['attendance_date'] ?? null;
-            $status = 1; // Default to "Present"
+            $status = 0; // Default to "Absent"
             $absence_reason = $_POST['absence_reason'] ?? "N/A"; // Accept reason or default to "N/A"
 
             if (!$member_id || !$date) {
