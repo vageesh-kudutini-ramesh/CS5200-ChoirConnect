@@ -57,7 +57,7 @@ The Choir Management Portal is a PHP-based web application designed to help mana
    - Start your local server and open the application in your browser.
    - Open your browser and navigate to:
      ```
-     http://localhost/CS5200FinalProject/membership_portal/UserLogin.php
+     http://localhost:8080/CS5200-ChoirConnect-Michael-s-branch/membership_portal/UserLogin.php
      ```
 
 ## Usage
